@@ -3,6 +3,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -17,7 +18,8 @@ public class VentanaJuego extends JFrame {
 	MundoJuego miMundo;        // Mundo del juego
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
-
+	public Boolean[] pulsaciones = new Boolean[4];
+	
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
 	 */
@@ -75,26 +77,69 @@ public class VentanaJuego extends JFrame {
 		});
 		
 		// Añadido para que también se gestione por teclado con el KeyListener
+		
+		
+		Arrays.fill(pulsaciones, Boolean.FALSE);
+		
 		pPrincipal.addKeyListener( new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
-					case KeyEvent.VK_UP: {
-						miCoche.acelera( +5, 1 );
-						break;
-					}
-					case KeyEvent.VK_DOWN: {
-						miCoche.acelera( -5, 1 );
-						break;
-					}
-					case KeyEvent.VK_LEFT: {
-						miCoche.gira( +10 );
-						break;
-					}
-					case KeyEvent.VK_RIGHT: {
-						miCoche.gira( -10 );
-						break;
-					}
+				case KeyEvent.VK_UP: {
+					pulsaciones[0]= true;
+					break;
+				}
+				case KeyEvent.VK_DOWN: {
+					pulsaciones[1]= true;
+					break;
+				}
+				case KeyEvent.VK_LEFT: {
+					pulsaciones[2]= true;
+					break;
+				}
+				case KeyEvent.VK_RIGHT: {
+					pulsaciones[3]= true;
+					break;
+				}
+			}
+//				switch (e.getKeyCode()) {
+//					case KeyEvent.VK_UP: {
+//						miCoche.acelera( +5, 1 );
+//						break;
+//					}
+//					case KeyEvent.VK_DOWN: {
+//						miCoche.acelera( -5, 1 );
+//						break;
+//					}
+//					case KeyEvent.VK_LEFT: {
+//						miCoche.gira( +10 );
+//						break;
+//					}
+//					case KeyEvent.VK_RIGHT: {
+//						miCoche.gira( -10 );
+//						break;
+//					}
+//				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_UP: {
+					pulsaciones[0]= false;
+					break;
+				}
+				case KeyEvent.VK_DOWN: {
+					pulsaciones[1]= false;
+					break;
+				}
+				case KeyEvent.VK_LEFT: {
+					pulsaciones[2]= false;
+					break;
+				}
+				case KeyEvent.VK_RIGHT: {
+					pulsaciones[3]= false;
+					break;
+				}
 				}
 			}
 		});
@@ -152,6 +197,19 @@ public class VentanaJuego extends JFrame {
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
 				// Mover coche
+				
+				if (pulsaciones[0]){
+					miCoche.acelera( +5, 1 );
+				}
+				if (pulsaciones[1]){
+					miCoche.acelera( -5, 1 );
+				}
+				if (pulsaciones[2]){
+					miCoche.gira( +10 );
+				}
+				if (pulsaciones[3]){
+					miCoche.gira( -10 );
+				}
 				miCoche.mueve( 0.040 );
 				// Chequear choques
 				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
