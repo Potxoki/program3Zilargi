@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.swing.*;
 
@@ -19,7 +20,9 @@ public class VentanaJuego extends JFrame {
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	public Boolean[] pulsaciones = new Boolean[4];
-	
+	private int puntos=0;
+	private int perdidas=0;
+	private JLabel lMensaje;
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
 	 */
@@ -33,15 +36,17 @@ public class VentanaJuego extends JFrame {
 		JButton bFrenar = new JButton( "Frena" );
 		JButton bGiraIzq = new JButton( "Gira Izq." );
 		JButton bGiraDer = new JButton( "Gira Der." );
+		lMensaje= new JLabel("Puntos 0 - Estrellas perdidas 0");
 		// Formato y layouts
 		pPrincipal.setLayout( null );
 		pPrincipal.setBackground( Color.white );
 		// Añadido de componentes a contenedores
 		add( pPrincipal, BorderLayout.CENTER );
-		pBotonera.add( bAcelerar );
-		pBotonera.add( bFrenar );
-		pBotonera.add( bGiraIzq );
-		pBotonera.add( bGiraDer );
+		//pBotonera.add( bAcelerar );
+		//pBotonera.add( bFrenar );
+		//pBotonera.add( bGiraIzq );
+		//pBotonera.add( bGiraDer );
+		pBotonera.add( lMensaje );
 		add( pBotonera, BorderLayout.SOUTH );
 		// Formato de ventana
 		setSize( 1000, 750 );
@@ -229,9 +234,14 @@ public class VentanaJuego extends JFrame {
 				//dibujarEstrellas();
 				
 				if (choquesConEstrellas()==1){
-					//sumar puntos
+					puntos+=5;
+					lMensaje.setText("Puntos "+puntos+ " - Estrellas perdidas " +  perdidas);
 				}
 				
+				if (perdidas>=10){
+					lMensaje.setText("SE ACABO EL JUEGO - Has sacado " +puntos + " PUNTOS");
+					sigo= false;
+				}
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
@@ -261,30 +271,55 @@ public class VentanaJuego extends JFrame {
 	
 	/** Quita todas las estrellas que lleven en pantalla demasiado tiempo   * y rota 10 grados las que sigan estando   * @param maxTiempo  Tiempo máximo para que se mantengan las estrellas (msegs)   * @return  Número de estrellas quitadas */  
 	public int quitaYRotaEstrellas( long maxTiempo ){
+		try{
 		Estrella est;
-		for (int i =0;i<miMundo.getEstrellas().size();i++){
+		//for (int i =0;i<miMundo.getEstrellas().size();i++){
+		for (int i =miMundo.getEstrellas().size()-1;i>=0;i--){
+		//for (Iterator<Estrella> it = miMundo.getEstrellas().iterator();it.hasNext();){
+			//est= it.next();
 			est= miMundo.getEstrellas().get(i);
 			if (Math.abs(System.currentTimeMillis()- est.getTiempo())>maxTiempo){
 				pPrincipal.remove(est.getGrafico());
 				miMundo.getEstrellas().remove(est);
-				//restar puntos
+				perdidas++;
+				lMensaje.setText("Puntos "+puntos+ " - Estrellas perdidas " +  perdidas);
 			}else{
 				est.getGrafico().setGiro(10);
 				pPrincipal.add(est.getGrafico());
 			}
 		}	
 		pPrincipal.repaint();
+		}
+		catch(Exception e){
+			
+		}
 		return 0;
 	}
+	
+
+	
+	
 	public int choquesConEstrellas(){
+		try{
 		Estrella est;
-		for (int i =0;i<miMundo.getEstrellas().size();i++){
+//		for (Iterator<Estrella> it = miMundo.getEstrellas().iterator();it.hasNext();){
+//			est= it.next();
+//			if (miMundo.hayChoque(miCoche, est)){
+//				pPrincipal.remove(est.getGrafico());
+//				miMundo.getEstrellas().remove(est);
+//				return 1;
+//			}
+//		}
+		for (int i =miMundo.getEstrellas().size()-1;i>=0;i--){
 			est= miMundo.getEstrellas().get(i);
 			if (miMundo.hayChoque(miCoche, est)){
 				pPrincipal.remove(est.getGrafico());
 				miMundo.getEstrellas().remove(est);
 				return 1;
 			}
+		}}
+		catch(Exception e){
+			
 		}
 		return 0;
 	}
