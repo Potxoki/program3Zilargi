@@ -5,6 +5,11 @@
  * Facultad de Ingeniería - Universidad de Deusto (2014)
  */
 public class Coche {
+	private static  double FUERZA_BASE_ADELANTE = 2000;
+	protected static  double FUERZA_BASE_ATRAS = 2000;
+	public static  double COEF_RZTO_SUELO = 15.5;
+	public static double MASA=1;
+	public static double COEF_RZTO_AIRE=0.35;
 	protected double miVelocidad;  // Velocidad en pixels/segundo
 	protected double miDireccionActual;  // Dirección en la que estoy mirando en grados (de 0 a 360)
 	protected double posX;  // Posición en X (horizontal)
@@ -103,4 +108,20 @@ public class Coche {
 		return piloto + " (" + posX + "," + posY + ") - " +
 			   "Velocidad: " + miVelocidad + " ## Dirección: " + miDireccionActual; 
 	}
+	public double fuerzaAceleracionAdelante() {   
+		if (miVelocidad<=-150) return FUERZA_BASE_ADELANTE;   
+		else if (miVelocidad<=0)  return FUERZA_BASE_ADELANTE*(-miVelocidad/150*0.5+0.5); 
+	  else if (miVelocidad<=250)  return FUERZA_BASE_ADELANTE*(miVelocidad/250*0.5+0.5); 
+	  else if (miVelocidad<=500)  return FUERZA_BASE_ADELANTE*(miVelocidad/500*0.5+0.5); 
+	  else if (miVelocidad<=750)  return FUERZA_BASE_ADELANTE; 
+	else return FUERZA_BASE_ADELANTE*(-(miVelocidad-1000)/250); 
+	} 
+	public double fuerzaAceleracionAtras() {   
+		if (miVelocidad>=150) return -FUERZA_BASE_ATRAS;   
+		else if (miVelocidad>=0)  return -FUERZA_BASE_ATRAS*(-miVelocidad/150*0.5+0.5); 
+	  else if (miVelocidad>=-250)  return -FUERZA_BASE_ATRAS*(miVelocidad/250*0.5+0.5); 
+	  else if (miVelocidad>=-500)  return -FUERZA_BASE_ATRAS*(miVelocidad/500*0.5+0.5); 
+	  else if (miVelocidad>=-750)  return -FUERZA_BASE_ATRAS; 
+	else return -FUERZA_BASE_ATRAS*(-(miVelocidad-1000)/250); 
+	} 
 }

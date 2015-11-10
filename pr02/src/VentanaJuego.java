@@ -177,6 +177,7 @@ public class VentanaJuego extends JFrame {
 			miVentana.miMundo.creaCoche( 150, 100 );
 			miVentana.miCoche = miVentana.miMundo.getCoche();
 			miVentana.miCoche.setPiloto( "Fernando Alonso" );
+			miVentana.miMundo.creaEstrella();
 			// Crea el hilo de movimiento del coche y lo lanza
 			miVentana.miHilo = miVentana.new MiRunnable();  // Sintaxis de new para clase interna
 			Thread nuevoHilo = new Thread( miVentana.miHilo );
@@ -199,10 +200,12 @@ public class VentanaJuego extends JFrame {
 				// Mover coche
 				
 				if (pulsaciones[0]){
-					miCoche.acelera( +5, 1 );
+					miMundo.aplicarFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche);
+					//miCoche.acelera( miCoche.fuerzaAceleracionAdelante(), 1 );
 				}
 				if (pulsaciones[1]){
-					miCoche.acelera( -5, 1 );
+					//miCoche.acelera( miCoche.fuerzaAceleracionAtras(), 1 );
+					miMundo.aplicarFuerza(miCoche.fuerzaAceleracionAtras(), miCoche);
 				}
 				if (pulsaciones[2]){
 					miCoche.gira( +10 );
@@ -217,6 +220,13 @@ public class VentanaJuego extends JFrame {
 					miMundo.rebotaHorizontal(miCoche);
 				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
 					miMundo.rebotaVertical(miCoche);
+				
+				
+				if (Math.abs(System.currentTimeMillis()-miMundo.getUltimaCreacion())>1200){
+					miMundo.creaEstrella();
+				}
+				quitaYRotaEstrellas(6000);
+				dibujarEstrellas();
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
@@ -224,11 +234,36 @@ public class VentanaJuego extends JFrame {
 				}
 			}
 		}
+		
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
 		public void acaba() {
 			sigo = false;
 		}
 	};
+	private void dibujarEstrellas() {
+		// TODO Auto-generated method stub
+		for (int i =0;i<miMundo.getEstrellas().size();i++){
+			Estrella est= miMundo.getEstrellas().get(i);
+			pPrincipal.remove(est.getGrafico());
+			est.getGrafico().setGiro(10);
+			pPrincipal.add(est.getGrafico());
+	
+		}
+		pPrincipal.repaint();
+	}
+	
+	/** Quita todas las estrellas que lleven en pantalla demasiado tiempo   * y rota 10 grados las que sigan estando   * @param maxTiempo  Tiempo máximo para que se mantengan las estrellas (msegs)   * @return  Número de estrellas quitadas */  
+	public int quitaYRotaEstrellas( long maxTiempo ){
+		for (int i =0;i<miMundo.getEstrellas().size();i++){
+			Estrella est= miMundo.getEstrellas().get(i);
+			if (Math.abs(System.currentTimeMillis()- est.getTiempo())>maxTiempo){
+				pPrincipal.remove(est.getGrafico());
+				miMundo.getEstrellas().remove(est);
+				
+			}
+		}	
+		return 0;
+	}
 	
 }
