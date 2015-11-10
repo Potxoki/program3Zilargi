@@ -226,7 +226,12 @@ public class VentanaJuego extends JFrame {
 					miMundo.creaEstrella();
 				}
 				quitaYRotaEstrellas(6000);
-				dibujarEstrellas();
+				//dibujarEstrellas();
+				
+				if (choquesConEstrellas()==1){
+					//sumar puntos
+				}
+				
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
@@ -241,29 +246,46 @@ public class VentanaJuego extends JFrame {
 			sigo = false;
 		}
 	};
-	private void dibujarEstrellas() {
-		// TODO Auto-generated method stub
-		for (int i =0;i<miMundo.getEstrellas().size();i++){
-			Estrella est= miMundo.getEstrellas().get(i);
-			pPrincipal.remove(est.getGrafico());
-			est.getGrafico().setGiro(10);
-			pPrincipal.add(est.getGrafico());
-	
-		}
-		pPrincipal.repaint();
-	}
+//	private void dibujarEstrellas() {
+//		Estrella est;
+//		// TODO Auto-generated method stub
+//		for (int i =0;i<miMundo.getEstrellas().size();i++){
+//			est= miMundo.getEstrellas().get(i);
+//			//pPrincipal.remove(est.getGrafico());
+//			est.getGrafico().setGiro(10);
+//			pPrincipal.add(est.getGrafico());
+//	
+//		}
+//		pPrincipal.repaint();
+//	}
 	
 	/** Quita todas las estrellas que lleven en pantalla demasiado tiempo   * y rota 10 grados las que sigan estando   * @param maxTiempo  Tiempo máximo para que se mantengan las estrellas (msegs)   * @return  Número de estrellas quitadas */  
 	public int quitaYRotaEstrellas( long maxTiempo ){
+		Estrella est;
 		for (int i =0;i<miMundo.getEstrellas().size();i++){
-			Estrella est= miMundo.getEstrellas().get(i);
+			est= miMundo.getEstrellas().get(i);
 			if (Math.abs(System.currentTimeMillis()- est.getTiempo())>maxTiempo){
 				pPrincipal.remove(est.getGrafico());
 				miMundo.getEstrellas().remove(est);
-				
+				//restar puntos
+			}else{
+				est.getGrafico().setGiro(10);
+				pPrincipal.add(est.getGrafico());
 			}
 		}	
+		pPrincipal.repaint();
 		return 0;
 	}
-	
+	public int choquesConEstrellas(){
+		Estrella est;
+		for (int i =0;i<miMundo.getEstrellas().size();i++){
+			est= miMundo.getEstrellas().get(i);
+			if (miMundo.hayChoque(miCoche, est)){
+				pPrincipal.remove(est.getGrafico());
+				miMundo.getEstrellas().remove(est);
+				return 1;
+			}
+		}
+		return 0;
+	}
 }

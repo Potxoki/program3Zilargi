@@ -147,4 +147,14 @@ public class MundoJuego {
 	} else { 
 	   coche.acelera( aceleracion, 0.04 );  } 
 	}
+	public boolean hayChoque( CocheJuego coche, Estrella estrella ) {
+		return (coche.getPosX()+JLabelCoche.RADIO_ESFERA_COCHE >  estrella.getPosX()-JLabelEstrella.RADIO_ESFERA_ESTRELLA
+				&& coche.getPosX()-JLabelCoche.RADIO_ESFERA_COCHE <  estrella.getPosX()+JLabelEstrella.RADIO_ESFERA_ESTRELLA
+				&& coche.getPosY()+JLabelCoche.RADIO_ESFERA_COCHE >  estrella.getPosY()-JLabelEstrella.RADIO_ESFERA_ESTRELLA
+				&& coche.getPosY()-JLabelCoche.RADIO_ESFERA_COCHE <  estrella.getPosY()+JLabelEstrella.RADIO_ESFERA_ESTRELLA
+				);
+	}
+	
+	
+	
 }
